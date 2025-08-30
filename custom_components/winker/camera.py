@@ -1,18 +1,23 @@
 import logging
 from homeassistant.components.camera import Camera
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.core import HomeAssistant
 from datetime import datetime, timedelta
-from .winker_api import WinkerAPI  # Import the API class
 import aiohttp
 import os
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_platform(hass: HomeAssistant, config, async_add_entities: AddEntitiesCallback, discovery_info=None):
-    """Set up the custom camera platform."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the custom camera platform from a config entry."""
     _LOGGER.error("Setting up the camera platform")
-    api = WinkerAPI()
+    # Get the API instance from config_entry.runtime_data
+    api = config_entry.runtime_data
 
     cameras = await api.fetch_cameras()
 

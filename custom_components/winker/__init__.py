@@ -21,9 +21,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     token = entry.data.get("token")
     api = WinkerAPI(token=token)
     
-    # Store the API instance in hass.data
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = api
+    # Store the API instance in entry.runtime_data (modern best practice)
+    entry.runtime_data = api
     
     # Set up platforms
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -33,8 +32,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        hass.data[DOMAIN].pop(entry.entry_id)
-    
-    return unload_ok
+    # No need to manually clean up entry.runtime_data - it's automatic
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 

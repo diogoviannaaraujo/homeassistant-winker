@@ -3,7 +3,7 @@ import aiohttp
 class WinkerAPI:
     """Class to interact with the door control API."""
 
-    def __init__(self, token):
+    def __init__(self, token=None):
         """Initialize the API client."""
         self.base_url = "https://api.winker.com.br/v1"
         self.token = token
@@ -52,11 +52,7 @@ class WinkerAPI:
                 if response.status == 200:
                     data = await response.json()
                     # Assuming the API returns a token in the response
-                    self.token = (
-                        data.get("token")
-                        or data.get("access_token")
-                        or data.get("auth_token")
-                    )
+                    self.token = data.get("token")
                     return self.token
                 else:
                      # Print the error response body for debugging

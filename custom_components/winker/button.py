@@ -1,14 +1,19 @@
 from homeassistant.components.button import ButtonEntity
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from .winker_api import WinkerAPI  # Import the API class
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the door control button platform dynamically."""
-    # Initialize the API instance here (or pass it in as a parameter)
-    api = WinkerAPI()
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the door control button platform from a config entry."""
+    # Get the API instance from config_entry.runtime_data
+    api = config_entry.runtime_data
 
     # Fetch button details from the API
     doors = await api.fetch_doors()  # This function should return the details for each door (e.g., ID, name)
