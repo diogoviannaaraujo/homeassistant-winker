@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Winker",
+        "description": "Enter your Winker account credentials to connect your devices.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password. Please check your credentials and try again.",
+      "cannot_connect": "Unable to connect to Winker API. Please check your internet connection.",
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "Account is already configured."
+    }
+  }
+}

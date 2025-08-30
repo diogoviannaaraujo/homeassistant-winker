@@ -1,0 +1,10 @@
+{
+  "domain": "winker",
+  "name": "Winker",
+  "version": "0.2",
+  "documentation": "https://your-url-to-documentation",
+  "dependencies": [],
+  "codeowners": ["@diogoviannaaraujo"],
+  "requirements": ["aiohttp"],
+  "config_flow": true
+}
