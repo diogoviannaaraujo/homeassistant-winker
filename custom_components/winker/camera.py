@@ -57,21 +57,16 @@ class ControlCamera(Camera):
         if self._camera is None:
             _LOGGER.error("Error getting image from camera")
             return None
-
-        if self._last_image_time is not None and datetime.utcnow() - self._last_image_time < timedelta(minutes=2):
-            self._last_image = await self.get_image_bytes(self._camera_url)
-            if self._last_image is not None:
-                _LOGGER.debug("Updating image")
-                self._last_image_time = datetime.utcnow()
-                self._streaming = True
-                return self._last_image
-
-        if self._last_image is None:
-            self._last_image = await self.get_image_bytes(self._camera_url)
-            _LOGGER.debug("Updating image")
-            self._last_image_time = datetime.utcnow()
-            self._streaming = True
+        
+        # return last image if its called in less that 2 seconds
+        if self._last_image_time is not None and datetime.utcnow() - self._last_image_time < timedelta(seconds=2):
             return self._last_image
+
+        self._last_image = await self.get_image_bytes(self._camera_url)
+        _LOGGER.debug("Updating image")
+        self._last_image_time = datetime.utcnow()
+        self._streaming = True
+        return self._last_image
 
         return None
 
