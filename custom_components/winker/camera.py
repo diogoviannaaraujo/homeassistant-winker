@@ -15,7 +15,6 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the custom camera platform from a config entry."""
-    _LOGGER.error("Setting up the camera platform")
     # Get the API instance from config_entry.runtime_data
     api = config_entry.runtime_data
 
@@ -59,17 +58,16 @@ class ControlCamera(Camera):
             _LOGGER.error("Error getting image from camera")
             return None
 
-        if self._last_image_time is not None and datetime.utcnow() - self._last_image_time < timedelta(minutes=2) and self._camera['jpg'] is not None:
-            _LOGGER.debug("No need to check camera status")
-            self._last_image = await self.get_image_bytes(self._camera['jpg'])
+        if self._last_image_time is not None and datetime.utcnow() - self._last_image_time < timedelta(minutes=2):
+            self._last_image = await self.get_image_bytes(self._camera_url)
             if self._last_image is not None:
                 _LOGGER.debug("Updating image")
                 self._last_image_time = datetime.utcnow()
                 self._streaming = True
                 return self._last_image
 
-        if (self._camera['status'] == "started" and self._camera['jpg'] is not None):
-            self._last_image = await self.get_image_bytes(self._camera['jpg'])
+        if self._last_image is None:
+            self._last_image = await self.get_image_bytes(self._camera_url)
             _LOGGER.debug("Updating image")
             self._last_image_time = datetime.utcnow()
             self._streaming = True
@@ -79,7 +77,7 @@ class ControlCamera(Camera):
 
     async def get_image_bytes(self, url):
         async with aiohttp.ClientSession() as session:
-            async with session.get(self._camera_url, headers={'Authorization': self._camera_token}) as response:
+            async with session.get(url, headers={'Authorization': self._camera_token}) as response:
                 if response.status == 200:
                     return await response.read()
                 else:
